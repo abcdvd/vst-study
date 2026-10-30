@@ -1,0 +1,7 @@
+# 공개 저장소에는 사이트(docs/)만 올린다.
+# tools/·README·study_plan.json 에는 방법 이름과 클러스터 경로가 있어 double-blind 심사에 걸릴 수 있고,
+# raw/·private/ 에는 원본 결과물과 익명 코드 ↔ 방법 이름 표가 있다. 이것들은 로컬(과 클러스터)에만 둔다.
+/*
+!/docs/
+!/.gitignore
+.DS_Store
