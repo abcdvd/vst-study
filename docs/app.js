@@ -370,7 +370,11 @@
 
   // 영상을 통째로 받아 blob URL 로 재생한다: 반복/동기화 시 끊김이 없고 다음 문항을 미리 받아둘 수 있다
   const blobs = new Map();
+  // 아이폰·아이패드(iOS 사파리)는 메모리에 받은 영상(blob)을 재생하지 못하는 경우가 있어 원래 주소로 직접 재생한다.
+  // iPadOS 는 맥처럼 보이므로 터치 지원 여부로 구분한다
+  const IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   function fetchBlob(u) {
+    if (IOS) return Promise.resolve(u);
     let e = blobs.get(u);
     if (!e) {
       e = { obj: null };
@@ -396,7 +400,7 @@
   }
   function prefetch(q) {
     if (!q) return;
-    videoUrls(q).forEach(fetchBlob);
+    if (!IOS) videoUrls(q).forEach(fetchBlob);
     const p = pairById[q.pair];
     if (C.showStyle && p.style) new Image().src = p.style;
     if (C.showStyle && p.styleImages) p.styleImages.forEach((u) => { new Image().src = u; });
@@ -414,13 +418,15 @@
     return v;
   }
 
+  // 메타데이터(길이·크기)까지만 받으면 재생을 시작할 수 있다고 본다.
+  // 아이폰 사파리는 재생을 시작하기 전에는 영상 데이터를 미리 받지 않아서, 첫 프레임(loadeddata)을 기다리면 끝나지 않는다
   function loadVideo(v, src, timeoutMs = 20000) {
     return new Promise((resolve) => {
       let done = false;
-      const finish = (ok) => { if (!done) { done = true; resolve(ok); } };
-      v.addEventListener('loadeddata', () => finish(true), { once: true });
-      v.addEventListener('error', () => finish(false), { once: true });
-      setTimeout(() => finish(v.readyState >= 2), timeoutMs);
+      const finish = (ok, why) => { if (!done) { done = true; clearTimeout(tm); resolve({ ok, why }); } };
+      v.addEventListener('loadedmetadata', () => finish(true), { once: true });
+      v.addEventListener('error', () => finish(false, 'error ' + (v.error ? v.error.code : '')), { once: true });
+      const tm = setTimeout(() => finish(v.readyState >= 1, 'timeout'), timeoutMs);
       v.src = src;
     });
   }
@@ -848,13 +854,15 @@
     const oks = await Promise.all(vids.map(async (x) => {
       const src = await fetchBlob(x.url);
       if (!alive) return false;
-      const ok = await loadVideo(x.video, src);
+      let res = await loadVideo(x.video, src);
+      // 메모리에 받은 영상(blob)으로 안 되면 원래 주소로 한 번 더
+      if (!res.ok && src !== x.url && alive) res = await loadVideo(x.video, x.url);
       loadText.textContent = s('loading', { done: ++loaded, total: vids.length });
-      if (!ok) {
-        loadErrors.push(x.code || 'content');
-        x.video.replaceWith(h('div', { class: 'err' }, s('loadErr')));
+      if (!res.ok) {
+        loadErrors.push(`${x.code || 'content'}:${res.why}`);
+        x.video.replaceWith(h('div', { class: 'err' }, s('loadErr'), h('br'), h('small', {}, `(${res.why})`)));
       }
-      return ok;
+      return res.ok;
     }));
     if (!alive) return;
 
