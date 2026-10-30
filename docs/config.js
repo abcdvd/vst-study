@@ -56,6 +56,7 @@ The examples are for reference only; the results do not need to look exactly lik
   minSecondsPerQuestion: 0,
 
   estimatedMinutes: 15,
+  approxDownloadMB: 190,   // 참가자 1명이 받는 영상 데이터 양 (휴대폰 안내 문구에 표시)
   askNickname: true,       // 시작 화면에서 닉네임 입력받기 (필수). 참가자 구분용, 응답과 함께 저장됨
   blockMobile: false,      // true면 휴대폰에서 참여 차단 (false면 경고만)
   contact: "",             // 문의처 (예: "abc@university.ac.kr") — 비우면 표시 안 함

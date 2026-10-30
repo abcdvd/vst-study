@@ -206,6 +206,10 @@ body.has-banner { --banner-h: 33px; }
 .ztab.on { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 .zoom-head .pbtn { margin-left: auto; }
 .zoomview .media { flex: 1; min-height: 0; cursor: zoom-out; }
+.tap-play {
+  position: absolute; inset: 0; z-index: 4; border: none; border-radius: var(--radius);
+  background: rgba(15,16,19,.6); color: var(--text); font-size: 18px; font-weight: 700; cursor: pointer;
+}
 
 .playbar {
   display: flex; align-items: center; gap: 8px; flex: none;
@@ -270,19 +274,25 @@ body.has-banner { --banner-h: 33px; }
 /* 좁은 화면: 위에서 아래로 쌓는다 (참조 → 결과 → 재생 막대 → 질문) */
 @media (max-width: 1000px) {
   .study { display: block; height: auto; }
-  .main { overflow: visible; justify-content: flex-start; }
-  .refbar { height: auto; flex-wrap: wrap; }
-  .ref-video { width: 100%; }
-  .ref-video .media { aspect-ratio: var(--ar, 16 / 9); }
-  .ref-image { max-width: 100%; width: 100%; }
-  .ref-image .media { max-height: 50vh; }
-  .ref-style { min-width: 100%; }
-  .sthumbs { height: 120px; }
-  .results { grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); }
+  .main { overflow: visible; justify-content: flex-start; padding: 12px; gap: 10px; }
+  /* 참조(원본 · 목표 스타일)는 반반 나란히 작게 둔다: 결과 영상과 질문까지 스크롤이 짧아진다. 원본은 누르면 크게 */
+  .refbar { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .ref-video, .ref-image, .ref-style { width: auto; max-width: none; min-width: 0; }
+  .ref-video .media, .ref-image .media { flex: none; aspect-ratio: var(--ar, 16 / 9); }
+  .ref-style { padding: 0 10px 10px; }
+  .ref-style .stext { font-size: 13px; line-height: 1.4; }
+  .ref-style .sub { display: none; }
+  .sthumbs { flex: none; height: 64px; margin-top: 6px; }
+  .results { grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 10px; }
   .results .media { width: 100%; height: auto; }
   .zoomview .media { flex: none; aspect-ratio: var(--ar, 16 / 9); }
   .panel { border-left: none; border-top: 1px solid var(--line); }
-  .crits { overflow: visible; }
+  .panel-head { padding: 12px 14px 10px; }
+  .crits { overflow: visible; padding: 2px 14px; }
+  .crit { padding: 10px 0; }
+  .crit .desc { margin: 3px 0 8px; }
+  .choices { margin-left: 0; }
+  .next-wrap { padding: 12px 14px 18px; }
   .sheet { margin: 16px; padding: 22px; }
 }
 @media (max-width: 600px) {

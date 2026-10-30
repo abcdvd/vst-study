@@ -23,7 +23,8 @@
       nickPh: '예: 별빛고양이',
       nickHelp: '실명 대신 닉네임을 입력해 주세요. 참여자를 구분하는 용도로만 사용됩니다.',
       contact: '문의',
-      mobileWarn: '작은 화면에서는 영상 비교가 어렵습니다. 가능하면 PC(데스크톱/노트북)에서 참여해 주세요.',
+      mobileWarn: '휴대폰으로도 참여할 수 있습니다. 다만 화면이 큰 PC(데스크톱/노트북)에서 비교하기가 더 쉽고, 영상 데이터를 약 {mb}MB 사용하므로 가능하면 Wi‑Fi 에서 참여해 주세요.',
+      tapToPlay: '▶ 눌러서 영상 재생',
       mobileBlock: '이 설문은 PC(데스크톱/노트북)에서만 참여할 수 있습니다. PC에서 같은 링크로 접속해 주세요.',
       instrTitle: '평가 방법',
       instrBest: '각 문항에서 평가 항목별로 <b>가장 좋은 결과 하나</b>를 선택해 주세요.',
@@ -87,7 +88,8 @@
       nickPh: 'e.g., bluecat',
       nickHelp: 'Please use a nickname rather than your real name. It is only used to tell participants apart.',
       contact: 'Contact',
-      mobileWarn: 'Comparing videos on a small screen is difficult. Please use a desktop or laptop if possible.',
+      mobileWarn: 'You can take part on a phone, but comparing is easier on a larger screen (desktop or laptop). The study downloads about {mb} MB of video, so please use Wi‑Fi if possible.',
+      tapToPlay: '▶ Tap to play',
       mobileBlock: 'This study can only be taken on a desktop or laptop. Please open the same link on a computer.',
       instrTitle: 'Instructions',
       instrBest: 'For each question, choose <b>the single best result</b> for each criterion.',
@@ -554,7 +556,7 @@
     app.replaceChildren(h('div', { class: 'sheet' },
       h('h1', {}, t(C.title)),
       h('div', { html: t(C.intro).replaceAll('{minutes}', C.estimatedMinutes).replaceAll('{questions}', st.questions.length) }),
-      smallScreen && h('div', { class: 'notice' }, s('mobileWarn')),
+      smallScreen && h('div', { class: 'notice' }, s('mobileWarn', { mb: C.approxDownloadMB || 200 })),
       C.contact && h('p', { class: 'muted' }, `${s('contact')}: ${C.contact}`),
       nick && h('div', { class: 'field' },
         h('label', { for: 'nickname' }, s('nickLabel'), h('span', { class: 'req' }, '*')),
@@ -681,10 +683,12 @@
         h('button', { class: 'pbtn', type: 'button', onclick: () => closeZoom() }, s('unzoom'))),
       h('div', { class: 'media', title: s('unzoomHint') }, zoomVideo));
     let zoomed = null;
+    let zoomFrom = null;
+    const narrow = () => innerWidth <= 1000;
     const openZoom = (i) => {
       const v = zoomables[i].video;
       if (!group || !group.videos.includes(v)) return; // 아직 로딩 중이거나 불러오지 못한 영상
-      if (zoomed == null) zooms++;
+      if (zoomed == null) { zooms++; zoomFrom = v.closest('.card, .ref'); }
       zoomed = i;
       zoomTabs.replaceChildren(...zoomables.map((z, j) => h('button', {
         class: j === i ? 'ztab on' : 'ztab', type: 'button', onclick: () => openZoom(j),
@@ -693,6 +697,7 @@
       group.add(zoomVideo);
       main.classList.add('zooming');
       zoomView.hidden = false;
+      if (narrow()) zoomView.scrollIntoView({ block: 'start' });
     };
     const closeZoom = () => {
       if (zoomed == null) return;
@@ -701,6 +706,8 @@
       main.classList.remove('zooming');
       if (group) group.remove(zoomVideo);
       layout();
+      // 휴대폰처럼 화면을 내려 보던 중이면 누른 영상 자리로 돌아간다
+      if (narrow() && zoomFrom) zoomFrom.scrollIntoView({ block: 'center' });
     };
     zoomables.forEach((z, i) => z.video.addEventListener('click', () => openZoom(i)));
     zoomVideo.addEventListener('click', closeZoom);
@@ -855,6 +862,13 @@
     overlay.remove();
     ready = true;
     t0 = performance.now();
+    const setPlayLabel = () => { playBtn.textContent = s(group && group.playing ? 'pause' : 'play'); };
+    // 자동재생이 막힌 환경(예: 아이폰 저전력 모드)에서는 결과 영상 위에 크게 '눌러서 재생' 버튼을 띄운다
+    let tapPlay = null;
+    const playFromTap = () => group.play().then((ok) => {
+      if (ok !== false && tapPlay) { tapPlay.remove(); tapPlay = null; }
+      setPlayLabel();
+    });
     if (good.length) {
       group = new SyncGroup(good, () => {
         status.textContent = s('watched');
@@ -862,12 +876,15 @@
         validate();
       });
       const started = await group.play();
-      if (started === false) playBtn.textContent = s('play');
+      if (started === false) {
+        tapPlay = h('button', { class: 'tap-play', type: 'button', onclick: playFromTap }, s('tapToPlay'));
+        results.append(tapPlay);
+      }
+      setPlayLabel();
     }
-    const setPlayLabel = () => { playBtn.textContent = s(group && group.playing ? 'pause' : 'play'); };
     playBtn.addEventListener('click', () => {
       if (!group) return;
-      if (group.playing) group.pause(); else group.play().then(setPlayLabel);
+      if (group.playing) group.pause(); else playFromTap();
       setPlayLabel();
     });
     restartBtn.addEventListener('click', () => group && group.restart());
