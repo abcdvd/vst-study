@@ -63,7 +63,7 @@ The examples are for reference only; the results do not need to look exactly lik
   blockMobile: false,      // true면 휴대폰에서 참여 차단 (false면 경고만)
   contact: "",             // 문의처 (예: "abc@university.ac.kr") — 비우면 표시 안 함
 
-  // 완료 화면에 보여줄 코드. 비우면 참가자 ID 기반 코드를 자동 생성. Prolific 등을 쓰면 고정 코드 + completionUrl 지정
+  // 완료 화면에 보여줄 코드. 비우면 코드를 보여주지 않는다. Prolific 등을 쓰면 고정 코드 + completionUrl 지정
   completionCode: "",
   completionUrl: "",
 

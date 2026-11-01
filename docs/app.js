@@ -996,8 +996,9 @@
     app.replaceChildren(h('div', { class: 'sheet center' },
       h('h1', {}, s('doneTitle')),
       h('p', {}, justSubmitted ? s('doneBody') : s('already')),
-      h('div', { class: 'muted' }, s('codeLabel')),
-      h('div', { class: 'code' }, st.completionCode),
+      // 완료 코드는 config.completionCode 를 넣었을 때만 보여준다 (사례 지급·외부 플랫폼용)
+      C.completionCode && h('div', { class: 'muted' }, s('codeLabel')),
+      C.completionCode && h('div', { class: 'code' }, C.completionCode),
       st.testMode && h('div', { class: 'notice' }, s('noEndpoint')),
       st.unverified && h('div', { class: 'notice' }, s('unverified')),
       h('div', { class: 'actions', style: 'justify-content:center' },
