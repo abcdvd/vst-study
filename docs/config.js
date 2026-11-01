@@ -5,9 +5,10 @@
 // 2026-10-30 v5: 1부 비교 방법 2개 추가 (7개) → 1부 21 + 2부 8 = 29문항, 약 15분
 // 2026-11-01 v6: 문항 줄임 → 1부 14 (방법마다 2번) + 2부 4 (방법마다 2번) = 18문항, 약 10분
 // 2026-11-01 v7: 평가 항목에서 '전체 품질' 제외 → 스타일 표현·내용 일치도·깜빡임 3개, 약 9분
+// 2026-11-02 v8: 문항이 참가자마다 다름 (docs/plan.js mode "balanced"): 묶음마다 비교 방법 하나당 빠른 영상 1개 + 느린 영상 1개를 무작위로 → 1부 14 + 2부 4 = 18문항 그대로
 window.STUDY_CONFIG = {
   // 응답 데이터에 함께 기록되는 ID. 설계를 바꾸면(문항/모드 변경 등) 값을 올려서 이전 응답과 구분한다.
-  studyId: "vst-userstudy-v7",
+  studyId: "vst-userstudy-v8",
 
   // Google Apps Script 웹 앱 URL (backend/apps_script.gs 배포 후 붙여넣기). 비어 있으면 전송하지 않고 JSON 다운로드만 제공.
   endpoint: "https://script.google.com/macros/s/AKfycbwlrJV8TdppGLJs7WlbOxJ9TGqH45y-caC62raTnMQl_bIR0UG_ZLAsuOu-Mb6p3hmR/exec",
@@ -17,7 +18,7 @@ window.STUDY_CONFIG = {
   // "best"     : 한 문항에 모든 방법의 결과를 보여주고 기준별로 가장 좋은 것 하나 선택 (문항 수 = 쌍 수)
   // "pairwise" : reference(우리 방법) vs baseline 하나씩 2AFC (문항 수 = 쌍 수 × baseline 수, sampling "one"이면 쌍 수)
   mode: "pairwise",
-  // docs/plan.js(고정 문항 목록)가 있으면 그것을 쓰고 아래 pairwiseSampling 은 무시된다.
+  // docs/plan.js(문항 계획: 고정 목록 또는 참가자별 balanced 뽑기)가 있으면 그것을 쓰고 아래 pairwiseSampling 은 무시된다.
   // "one": 쌍마다 비교 방법 하나. 참가자 안에서 비교 방법별 문항 수가 같도록 돌려 배정 (1부: 5개 방법이 2~3번씩, 2부: 2개 방법이 2번씩)
   pairwiseSampling: "one",
 

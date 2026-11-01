@@ -3,8 +3,11 @@
 
   const C = window.STUDY_CONFIG;
   const M = window.STUDY_MANIFEST;
-  // 고정 문항 목록 (tools/make_plan.py 가 만든 docs/plan.js). 있으면 모든 참가자가 같은 문항을 풀고 순서·A/B 위치만 섞인다
-  const PLAN = window.STUDY_PLAN && Array.isArray(window.STUDY_PLAN.questions) ? window.STUDY_PLAN : null;
+  // 문항 계획 (tools/make_plan.py 가 만든 docs/plan.js). questions 가 있으면 모든 참가자가 같은 문항을 풀고 순서·A/B 위치만 섞인다.
+  // mode "balanced" 면 참가자마다 묶음별로 비교 방법 하나당 빠른 영상 쌍 1개 + 느린 영상 쌍 1개를 뽑는다 (buildQuestions)
+  const PLAN = window.STUDY_PLAN && (Array.isArray(window.STUDY_PLAN.questions) || window.STUDY_PLAN.mode === 'balanced')
+    ? window.STUDY_PLAN : null;
+  const BALANCED = !!(PLAN && PLAN.mode === 'balanced');
   const app = document.getElementById('app');
   const pageUrl = new URL(location.href);
   const qp = pageUrl.searchParams;
@@ -245,7 +248,20 @@
       const pairs = M.pairs.filter((p) => (p.block || 'main') === bid);
       const methodsOf = (p) => M.methods.filter((m) => p.results[m]);
       const main = [];
-      if (PLAN && C.mode === 'pairwise') {
+      if (BALANCED && C.mode === 'pairwise') {
+        // 속도 묶음(빠름/느림)마다: 영상 쌍을 섞어 비교 방법 수만큼 이어 붙인 뒤(모자라면 다시 섞어 덧붙임) 섞은 비교 방법과 짝짓는다.
+        // → 비교 방법마다 묶음당 1문항, 한 참가자 안에서 같은 묶음의 영상 쌍은 고르게(최대 1번 차이) 쓰인다
+        const pb = (PLAN.blocks || []).find((x) => x.block === bid);
+        if (pb) {
+          for (const [speed, ids] of Object.entries(pb.groups || {})) {
+            if (!ids.length) continue;
+            const deck = [];
+            while (deck.length < pb.baselines.length) deck.push(...shuffle(rng, ids.slice()));
+            shuffle(rng, pb.baselines.slice())
+              .forEach((b, i) => main.push({ pair: deck[i], candidates: [ref, b], speed }));
+          }
+        }
+      } else if (PLAN && C.mode === 'pairwise') {
         PLAN.questions.filter((x) => x.block === bid)
           .forEach((x) => main.push({ pair: x.pair, candidates: [ref, x.baseline] }));
       } else if (C.mode === 'pairwise') {
@@ -286,7 +302,7 @@
         const src = main[oi];
         const rep = {
           qid: 'r' + String(++nRep).padStart(2, '0'), kind: 'repeat', repeatOf: src.qid, block: bid,
-          pair: src.pair, candidates: derange(rng, src.candidates),
+          pair: src.pair, candidates: derange(rng, src.candidates), speed: src.speed,
         };
         const lo = Math.min(Math.max(half, oi + 3), blk.length);
         blk.splice(lo + Math.floor(rng() * (blk.length - lo + 1)), 0, rep);
@@ -342,7 +358,7 @@
       participantId: st.participantId,
       nickname: st.nickname || '',
       mode: C.mode,
-      pairwiseSampling: C.mode === 'pairwise' ? (PLAN ? 'fixed' : C.pairwiseSampling) : undefined,
+      pairwiseSampling: C.mode === 'pairwise' ? (BALANCED ? 'balanced' : PLAN ? 'fixed' : C.pairwiseSampling) : undefined,
       planId: PLAN ? PLAN.id : null,
       lang: st.lang,
       startedAt: st.startedAt,
@@ -836,6 +852,7 @@
         repeatOf: q.repeatOf || null,
         pair: q.pair,
         block: q.block || 'main',
+        speed: q.speed || null,
         candidates: q.candidates,
         choices: Object.fromEntries(C.criteria.map((c) => [c.id, q.candidates[choices[c.id]]])),
         positions: Object.fromEntries(C.criteria.map((c) => [c.id, LETTERS[choices[c.id]]])),
