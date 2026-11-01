@@ -4,9 +4,10 @@
 // 2026-10-30 v4: 고정 문항 23개 (docs/plan.js, tools/study_plan.json 의 questions). 반복 확인 문항 없음, 약 12분
 // 2026-10-30 v5: 1부 비교 방법 2개 추가 (7개) → 1부 21 + 2부 8 = 29문항, 약 15분
 // 2026-11-01 v6: 문항 줄임 → 1부 14 (방법마다 2번) + 2부 4 (방법마다 2번) = 18문항, 약 10분
+// 2026-11-01 v7: 평가 항목에서 '전체 품질' 제외 → 스타일 표현·내용 일치도·깜빡임 3개, 약 9분
 window.STUDY_CONFIG = {
   // 응답 데이터에 함께 기록되는 ID. 설계를 바꾸면(문항/모드 변경 등) 값을 올려서 이전 응답과 구분한다.
-  studyId: "vst-userstudy-v6",
+  studyId: "vst-userstudy-v7",
 
   // Google Apps Script 웹 앱 URL (backend/apps_script.gs 배포 후 붙여넣기). 비어 있으면 전송하지 않고 JSON 다운로드만 제공.
   endpoint: "https://script.google.com/macros/s/AKfycbwlrJV8TdppGLJs7WlbOxJ9TGqH45y-caC62raTnMQl_bIR0UG_ZLAsuOu-Mb6p3hmR/exec",
@@ -56,7 +57,7 @@ The examples are for reference only; the results do not need to look exactly lik
   requireFullPlay: true,   // 영상을 끝까지 한 번 본 뒤에만 다음 문항으로 진행 가능
   minSecondsPerQuestion: 0,
 
-  estimatedMinutes: 10,
+  estimatedMinutes: 9,
   approxDownloadMB: 160,   // 참가자 1명이 받는 영상 데이터 양 (휴대폰 안내 문구에 표시)
   askNickname: true,       // 시작 화면에서 닉네임 입력받기 (필수). 참가자 구분용, 응답과 함께 저장됨
   blockMobile: false,      // true면 휴대폰에서 참여 차단 (false면 경고만)
@@ -101,14 +102,6 @@ For each criterion, please choose the result you think is better.</p>
 
   // 평가 기준 (문항마다 이 순서대로 질문). id 는 분석 결과 표의 열 이름이 된다. descByBlock 으로 묶음별 문구를 바꿀 수 있다
   criteria: [
-    {
-      id: "overall",
-      label: { ko: "전체 품질", en: "Overall quality" },
-      desc: {
-        ko: "전체적인 완성도(화질, 자연스러움)가 더 좋은 결과는?",
-        en: "Which result has better overall quality (image quality, naturalness)?",
-      },
-    },
     {
       id: "style",
       label: { ko: "스타일 표현", en: "Stylization" },
