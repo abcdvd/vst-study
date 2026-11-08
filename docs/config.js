@@ -60,7 +60,7 @@ The examples are for reference only; the results do not need to look exactly lik
 
   estimatedMinutes: 9,
   approxDownloadMB: 160,   // 참가자 1명이 받는 영상 데이터 양 (휴대폰 안내 문구에 표시)
-  askNickname: true,       // 시작 화면에서 닉네임 입력받기 (필수). 참가자 구분용, 응답과 함께 저장됨
+  askNickname: true,       // 시작 화면에서 이름 입력받기 (필수). 참가자 구분용, 응답의 nickname 칸에 저장됨
   blockMobile: false,      // true면 휴대폰에서 참여 차단 (false면 경고만)
   contact: "",             // 문의처 (예: "abc@university.ac.kr") — 비우면 표시 안 함
 
@@ -80,7 +80,7 @@ The examples are for reference only; the results do not need to look exactly lik
 평가 항목별로 더 낫다고 생각하는 결과를 선택해 주세요.</p>
 <ul>
   <li>예상 소요 시간: 약 {minutes}분 (두 부분, 모두 {questions}문항)</li>
-  <li>실명, 이메일 등 개인을 식별할 수 있는 정보는 수집하지 않습니다 (참여자 구분용 닉네임만 입력받습니다). 응답은 연구 목적으로만 사용됩니다.</li>
+  <li>참여자 구분을 위해 이름을 입력받습니다. 이름은 중복 참여 확인에만 쓰이고 연구 결과에는 공개되지 않으며, 연구가 끝나면 파기합니다. 응답은 연구 목적으로만 사용됩니다.</li>
   <li>참여는 자발적이며 언제든지 중단할 수 있습니다.</li>
   <li>PC(데스크톱/노트북)의 큰 화면과 안정적인 네트워크 환경을 권장합니다.</li>
 </ul>`,
@@ -89,7 +89,7 @@ Each question shows an <b>input video</b>, the <b>target style</b>, and <b>two s
 For each criterion, please choose the result you think is better.</p>
 <ul>
   <li>Estimated time: about {minutes} minutes (two parts, {questions} questions in total)</li>
-  <li>No personally identifiable information is collected (only a nickname to tell participants apart). Responses are used for research purposes only.</li>
+  <li>We ask for your name only to tell participants apart and check for duplicate participation. Names are never published with the results and are deleted when the study ends. Responses are used for research purposes only.</li>
   <li>Participation is voluntary and you may stop at any time.</li>
   <li>A desktop or laptop with a large screen and a stable network connection is recommended.</li>
 </ul>`,
