@@ -69,13 +69,13 @@ The examples are for reference only; the results do not need to look exactly lik
   completionUrl: "",
 
   title: {
-    ko: "비디오 스타일 전이 사용자 평가",
-    en: "Video Style Transfer User Study",
+    ko: "비디오 스타일화 사용자 평가",
+    en: "Video Stylization User Study",
   },
 
   // 시작 화면 안내문 (HTML 허용). {minutes} 는 estimatedMinutes 로 치환됨
   intro: {
-    ko: `<p>본 설문은 비디오 스타일 전이(video style transfer) 결과의 품질을 평가하기 위한 사용자 평가입니다.
+    ko: `<p>본 설문은 비디오 스타일화(video stylization) 결과의 품질을 평가하기 위한 사용자 평가입니다.
 각 문항에서 <b>원본 영상</b>, <b>목표 스타일</b>, 그리고 서로 다른 방법으로 만든 <b>결과 영상 두 개(A, B)</b>가 제시됩니다.
 평가 항목별로 더 낫다고 생각하는 결과를 선택해 주세요.</p>
 <ul>
@@ -84,7 +84,7 @@ The examples are for reference only; the results do not need to look exactly lik
   <li>참여는 자발적이며 언제든지 중단할 수 있습니다.</li>
   <li>PC(데스크톱/노트북)의 큰 화면과 안정적인 네트워크 환경을 권장합니다.</li>
 </ul>`,
-    en: `<p>This study evaluates the quality of video style transfer results.
+    en: `<p>This study evaluates the quality of video stylization results.
 Each question shows an <b>input video</b>, the <b>target style</b>, and <b>two stylized results (A and B)</b> produced by different methods.
 For each criterion, please choose the result you think is better.</p>
 <ul>
