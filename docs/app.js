@@ -376,6 +376,8 @@
         viewport: `${innerWidth}x${innerHeight}`,
         dpr: devicePixelRatio,
         tz: (Intl.DateTimeFormat().resolvedOptions() || {}).timeZone,
+        // 기기 설정에 따른 화면 테마 (영상 주변 밝기가 달라지므로 분석 때 확인할 수 있게 남긴다)
+        theme: matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark',
       },
       checks: consistency(st),
       answers: st.answers,
